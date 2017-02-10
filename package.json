@@ -1,0 +1,17 @@
+{
+  "name": "hashcode-2017",
+  "version": "1.0.0",
+  "description": "Cradmanshit@hashcode2017",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ikempf/hashcode-2017"
+  },
+  "devDependencies": {
+    "lodash": "=4.17.4"
+  }
+}
