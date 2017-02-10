@@ -4,7 +4,7 @@
   "description": "Cradmanshit@hashcode2017",
   "main": "index.js",
   "scripts": {
-    "start": "node src/main.js"
+    "start": "node src/main.js && npm pack && mv *.tgz target/"
   },
   "license": "GPL-3.0",
   "repository": {

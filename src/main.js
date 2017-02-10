@@ -21,7 +21,7 @@ const result = Program.run({
 
 console.log("--------------------OUTPUT-------------------");
 console.log(result);
-IO.createDirectory("./result");
 let resultLines = _.flatMap([result.rows, result.columns, result.data]);
-IO.writeFile("./result/result", IO.oneLinePerElement(resultLines));
+IO.createDirectory("./target");
+IO.writeFile("./target/small.out", IO.oneLinePerElement(resultLines));
 console.log("---------------------------------------------");
