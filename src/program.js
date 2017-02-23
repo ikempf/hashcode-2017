@@ -1,5 +1,5 @@
 function run(spec) {
-    // TODO !
+    console.log(spec);
     return spec;
 }
 
