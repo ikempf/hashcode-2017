@@ -8,19 +8,19 @@ let requests = [{
     endpoint: 1,
     video: 1,
     count: 10
-},{
+}, {
     endpoint: 2,
     video: 2,
     count: 20
-},{
+}, {
     endpoint: 3,
     video: 1,
     count: 15
 }];
 
 let videos = [
-    {id: 1, size: 10},
-    {id: 2, size: 20}
+    {id: 1, size: 99},
+    {id: 2, size: 1}
 ];
 
 let endpoints = [
@@ -30,8 +30,8 @@ let endpoints = [
 ];
 
 let caches = [
-    {id: 1, size: 10000},
-    {id: 2, size: 2000}
+    {id: 1, size: 1000},
+    {id: 2, size: 10}
 ];
 
 function a(vid, end, req, cac) {
@@ -53,34 +53,40 @@ function a(vid, end, req, cac) {
     })
 }
 
-console.log(JSON.stringify(flatten(a(videos, endpoints, requests, caches)), null, 4));
-
-function flatten(list) {
-    let list2 = _.flatMap(list);
-    let list3 = _.flatMap(list2, l => l.caches);
-    let list4 = _.map(list3, l => {
-        return {
-            video: l.video,
-            cache: l.cache,
-            score: l.score
-        }
-    });
-    let res = _.groupBy(list4, c => c.cache.id);
+function flatten(list, cac) {
+    let res = {};
+    _(list)
+        .flatMap()
+        .flatMap(l => l.caches)
+        .map(l => {
+            return {
+                video: l.video,
+                cache: l.cache,
+                score: l.score
+            }
+        })
+        .groupBy(c => c.cache.id)
+        .forEach((l, k) => {
+            res[k] = _(l)
+                .sortBy(c => c.score)
+                .reverse()
+                .map(e => {
+                    if (e.video.size > _.find(cac, {id: e.cache.id}).size) {
+                        return -1;
+                    } else {
+                        _.find(cac, {id: e.cache.id}).size -= e.video.size;
+                        return e.video.id;
+                    }
+                })
+                .uniq()
+                .filter(e => e >= 0);
+        });
     return res;
 }
 
-// function select(cac, scores) {
-//     _.sortBy(scores, ['score']).reverse()
-//         .map(s => {
-//             if (s.cache.size < s.video.size) {
-//
-//             }
-//         })
-// }
-//
-// function endpointToLatency(e) {
-//     return
-// }
+let blah = JSON.stringify(flatten(a(videos, endpoints, requests, caches), caches), null, 4);
+
+console.log(blah);
 
 module.exports = {
     run
