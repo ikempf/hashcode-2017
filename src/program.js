@@ -35,12 +35,12 @@ let caches = {
 };
 
 function a(vid, end, req, cac) {
-
+    var t = [];
     _(req)
-        .map(r => end[r.endpoint].caches.map(c => {
+        .map(r => end[r.endpoint].caches.slice(0, 80).map(c => {
             let v = vid[r.video];
             return {
-                video: v,
+                videoId: r.video,
                 cacheId: c.id,
                 score: v.size * r.count / c.latency
             };
@@ -52,23 +52,24 @@ function a(vid, end, req, cac) {
                 .sortBy(c => c.score)
                 .reverse()
                 .map(e => {
-                    if (e.video.size > cac[e.cacheId].size) {
+                    if (vid[e.videoId].size > cac[e.cacheId].size) {
                         return -1;
                     } else {
-                        cac[e.cacheId].size -= e.video.size;
-                        return e.video.id;
+                        cac[e.cacheId].size -= vid[e.videoId].size;
+                        return e.videoId;
                     }
                 })
                 .uniq()
                 .filter(e => e >= 0);
-            console.log(k + " " + res.join(" "))
+            t.push(k + " " + res.join(" "));
         });
+    return t;
 
 }
 
-let blah = JSON.stringify(a(videos, endpoints, requests, caches), null, 4);
+// let blah = JSON.stringify(a(videos, endpoints, requests, caches), null, 4);
 //
-console.log(blah);
+// console.log(blah);
 
 module.exports = {
     run

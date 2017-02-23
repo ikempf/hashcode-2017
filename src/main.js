@@ -3,10 +3,10 @@ const Program = require("./program");
 const _ = require('lodash');
 const util = require('util');
 
-console.log("--------------------INPUT--------------------");
+// console.log("--------------------INPUT--------------------");
 const input = IO.readFile("./resources/kittens.in");
 // console.log(input);
-console.log("---------------------------------------------");
+// console.log("---------------------------------------------");
 
 
 const lines = input.split("\n");
@@ -21,7 +21,7 @@ let spec = {
     cacheServerSize: +head[4],
     videoSizes: videoSizes
 };
-let arrayCaches = _.fill(Array(spec.cacheServerCount), spec.cacheServerSize).map((c, i) => ({id: ""+i, size: c}));
+let arrayCaches = _.fill(Array(spec.cacheServerCount), spec.cacheServerSize).map((c, i) => ({id: "" + i, size: c}));
 spec.caches = _.keyBy(arrayCaches, 'id');
 
 let endpoints = {};
@@ -51,7 +51,10 @@ for (let i = 0; i < spec.requestCount; i++) {
     requests.push({video: +requestData[0], endpoint: +requestData[1], count: +requestData[2]});
 }
 spec.requests = requests;
+
 const result = Program.run(spec);
+console.log(result.length)
+_.forEach(result, t => console.log(t))
 // console.log("--------------------OUTPUT-------------------");
 
 // console.log("HELLO")
