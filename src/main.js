@@ -21,6 +21,8 @@ let spec = {
     cacheServerSize: +head[4],
     videoSizes: videoSizes
 };
+let arrayCaches = _.fill(Array(spec.cacheServerCount), spec.cacheServerSize).map((c, i) => ({id: i, size: c}));
+spec.caches = _.keyBy(arrayCaches, 'id');
 
 let endpoints = {};
 let endpointToCacheConnectionCount = 0;
@@ -30,12 +32,12 @@ for (let i = 0; i < spec.endpointCount; i++) {
     const endpointData = lines[endpointToCacheConnectionCountAll + i + 2].split(" ");
     endpoints[i] = {dataCenterLatency: +endpointData[0], cacheServerCount: +endpointData[1]};
 
-    let cacheServers = {};
+    let cacheServers = [];
     for (let j = 0; j < endpoints[i].cacheServerCount; j++) {
         const cacheServerData = lines[endpointToCacheConnectionCountAll + j + i + 2 + 1].split(" ");
-        cacheServers[j] = {cacheServerId: +cacheServerData[0], latency: +cacheServerData[1]};
+        cacheServers.push({cacheServerId: +cacheServerData[0], latency: +cacheServerData[1]});
     }
-    endpoints[i].cacheServers = cacheServers;
+    endpoints[i].caches = cacheServers;
     endpointToCacheConnectionCount = endpoints[i].cacheServerCount;
     endpointToCacheConnectionCountAll = endpointToCacheConnectionCountAll + endpoints[i].cacheServerCount;
 }
@@ -43,16 +45,15 @@ spec.endpoints = endpoints;
 // console.log(endpointToCacheConnectionCountAll + 2 + spec.endpointCount);
 // console.log(util.inspect(spec.endpoints[1], false, null))
 
-let requests = {};
+let requests = [];
 for (let i = 0; i < spec.videoCount; i++) {
     const requestData = lines[endpointToCacheConnectionCountAll + spec.endpointCount + i + 2].split(" ");
-    requests[i] = {videoId: +requestData[0], endpointId: +requestData[1], requestCount: +requestData[2]};
+    requests.push({video: +requestData[0], endpoint: +requestData[1], count: +requestData[2]});
 }
-spec.request = requests;
+spec.requests = requests;
 const result = Program.run(spec);
 
 console.log("--------------------OUTPUT-------------------");
-// console.log(result);
 let resultLines = _.flatMap([result.rows, result.columns, result.data]);
 IO.createDirectory("./target");
 IO.writeFile("./target/small.out", IO.oneLinePerElement(resultLines));
