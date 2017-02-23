@@ -35,45 +35,27 @@ let caches = {
 };
 
 function a(vid, end, req, cac) {
-    return req.map(r => {
-        let e = end[r.endpoint];
-        return {
-            // endpoint: e,
-            caches: e.caches.map(c => {
-                let v = vid[r.video];
-                let c2 = cac[c.id];
-                return {
-                    endpoint: e,
-                    video: v,
-                    cache: c2,
-                    score: v.size * r.count / c.latency
-                };
-            })
-        };
-    })
-}
 
-function flatten(list, cac) {
-    _(list)
-        .flatMap()
-        .flatMap(l => l.caches)
-        .map(l => {
+    _(req)
+        .map(r => end[r.endpoint].caches.map(c => {
+            let v = vid[r.video];
             return {
-                video: l.video,
-                cache: l.cache,
-                score: l.score
-            }
-        })
-        .groupBy(c => c.cache.id)
+                video: v,
+                cacheId: c.id,
+                score: v.size * r.count / c.latency
+            };
+        }))
+        .flatMap()
+        .groupBy(c => c.cacheId)
         .forEach((l, k) => {
             let res = _(l)
                 .sortBy(c => c.score)
                 .reverse()
                 .map(e => {
-                    if (e.video.size > cac[e.cache.id].size) {
+                    if (e.video.size > cac[e.cacheId].size) {
                         return -1;
                     } else {
-                        cac[e.cache.id].size -= e.video.size;
+                        cac[e.cacheId].size -= e.video.size;
                         return e.video.id;
                     }
                 })
@@ -81,12 +63,12 @@ function flatten(list, cac) {
                 .filter(e => e >= 0);
             console.log(k + " " + res.join(" "))
         });
-    return res;
+
 }
 
-// let blah = JSON.stringify(flatten(a(videos, endpoints, requests, caches), caches), null, 4);
+let blah = JSON.stringify(a(videos, endpoints, requests, caches), null, 4);
 //
-// console.log(blah);
+console.log(blah);
 
 module.exports = {
     run
