@@ -1,6 +1,7 @@
 const IO = require("./io");
 const Program = require("./program");
 const _ = require('lodash');
+const util = require('util');
 
 console.log("--------------------INPUT--------------------");
 const input = IO.readFile("./resources/kittens.in");
@@ -23,23 +24,31 @@ let spec = {
 
 let endpoints = {};
 let endpointToCacheConnectionCount = 0;
-
-for (let i = 0; i < spec.endpointCount + endpointToCacheConnectionCount; i++) {
-    const endpointData = lines[endpointToCacheConnectionCount+ i + 2].split(" ");
+let endpointToCacheConnectionCountAll = 0;
+for (let i = 0; i < spec.endpointCount; i++) {
+    // console.log(i, endpointToCacheConnectionCountAll + i + 2, lines[endpointToCacheConnectionCountAll + i + 2]);
+    const endpointData = lines[endpointToCacheConnectionCountAll + i + 2].split(" ");
     endpoints[i] = {dataCenterLatency: +endpointData[0], cacheServerCount: +endpointData[1]};
 
     let cacheServers = {};
     for (let j = 0; j < endpoints[i].cacheServerCount; j++) {
-        const cacheServerData = lines[endpointToCacheConnectionCount+ j + i + 2 + 1].split(" ");
+        const cacheServerData = lines[endpointToCacheConnectionCountAll + j + i + 2 + 1].split(" ");
         cacheServers[j] = {cacheServerId: +cacheServerData[0], latency: +cacheServerData[1]};
     }
     endpoints[i].cacheServers = cacheServers;
     endpointToCacheConnectionCount = endpoints[i].cacheServerCount;
+    endpointToCacheConnectionCountAll = endpointToCacheConnectionCountAll + endpoints[i].cacheServerCount;
 }
 spec.endpoints = endpoints;
+// console.log(endpointToCacheConnectionCountAll + 2 + spec.endpointCount);
+// console.log(util.inspect(spec.endpoints[1], false, null))
 
-
-
+let requests = {};
+for (let i = 0; i < spec.videoCount; i++) {
+    const requestData = lines[endpointToCacheConnectionCountAll + spec.endpointCount + i + 2].split(" ");
+    requests[i] = {videoId: +requestData[0], endpointId: +requestData[1], requestCount: +requestData[2]};
+}
+spec.request = requests;
 const result = Program.run(spec);
 
 console.log("--------------------OUTPUT-------------------");
