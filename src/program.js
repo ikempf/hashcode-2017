@@ -37,7 +37,7 @@ let caches = {
 function a(vid, end, req, cac) {
     var t = [];
     _(req)
-        .map(r => end[r.endpoint].caches.slice(0, 80).map(c => {
+        .map(r => end[r.endpoint].caches.slice(0, 50).map(c => {
             let v = vid[r.video];
             return {
                 videoId: r.video,

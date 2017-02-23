@@ -4,7 +4,7 @@ const _ = require('lodash');
 const util = require('util');
 
 // console.log("--------------------INPUT--------------------");
-const input = IO.readFile("./resources/kittens.in");
+const input = IO.readFile(`./resources/${process.argv[2]}`);
 // console.log(input);
 // console.log("---------------------------------------------");
 
