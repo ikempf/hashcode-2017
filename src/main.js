@@ -22,19 +22,23 @@ let spec = {
 };
 
 let endpoints = {};
-for (let i = 0; i < spec.endpointCount; i++) {
-    const endpointData = lines[i + 2].split(" ");
+let endpointToCacheConnectionCount = 0;
+
+for (let i = 0; i < spec.endpointCount + endpointToCacheConnectionCount; i++) {
+    const endpointData = lines[endpointToCacheConnectionCount+ i + 2].split(" ");
     endpoints[i] = {dataCenterLatency: +endpointData[0], cacheServerCount: +endpointData[1]};
 
     let cacheServers = {};
     for (let j = 0; j < endpoints[i].cacheServerCount; j++) {
-        const cacheServerData = lines[j + i + 2 + 1].split(" ");
-        endpoints[i] = {cacheServerId: +cacheServerData[0], latency: +cacheServerData[1]};
+        const cacheServerData = lines[endpointToCacheConnectionCount+ j + i + 2 + 1].split(" ");
+        cacheServers[j] = {cacheServerId: +cacheServerData[0], latency: +cacheServerData[1]};
     }
     endpoints[i].cacheServers = cacheServers;
+    endpointToCacheConnectionCount = endpoints[i].cacheServerCount;
 }
-
 spec.endpoints = endpoints;
+
+
 
 const result = Program.run(spec);
 

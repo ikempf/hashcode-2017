@@ -1,5 +1,4 @@
 function run(spec) {
-    console.log(spec);
     return spec;
 }
 
