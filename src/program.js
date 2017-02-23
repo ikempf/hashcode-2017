@@ -34,10 +34,19 @@ let caches = {
     2: {size: 2000}
 };
 
+function select(caches, nb) {
+    let max = Math.min(nb, caches.length);
+    let subCaches = [];
+    for(var i = 0 ; i < max ; i++) {
+        subCaches.push(caches[parseInt(Math.random() * (caches.length - 1))]);
+    }
+    return subCaches;
+}
+
 function a(vid, end, req, cac) {
     var t = [];
     _(req)
-        .map(r => end[r.endpoint].caches.slice(0, 80).map(c => {
+        .map(r => select(end[r.endpoint].caches, 40).map(c => {
             let v = vid[r.video];
             return {
                 videoId: r.video,
