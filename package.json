@@ -5,7 +5,7 @@
   "main": "src/program.js",
   "license": "GPL-3.0",
   "scripts": {
-    "start": "node src/main.js && npm pack && mv *.tgz target/"
+    "start": "npm pack && mv *.tgz target/"
   },
   "repository": {
     "type": "git",
